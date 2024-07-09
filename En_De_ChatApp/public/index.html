@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>CryptoConnect</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="styles.css"> <!-- Link to your custom CSS file -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        /* Custom CSS to adjust layout */
+        .encryption-section,
+        .decryption-section {
+            margin-bottom: 20px;
+            /* Add spacing between sections */
+            background-color: #16f502;
+            /* Set the background color */
+            padding: 20px;
+            /* Add padding for better spacing */
+            border-radius: 10px;
+            /* Add border radius for rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* Add shadow for depth effect */
+        }
+
+        .chat-screen {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 20px;
+            /* Add padding for better spacing */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            /* Add shadow for depth effect */
+            height: calc(100vh - 100px);
+            /* Set the height to 100% of viewport height minus header height */
+            overflow-y: auto;
+            /* Enable vertical scrolling if content exceeds the height */
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            /* Increase margin for better spacing */
+            padding: 20px;
+            /* Add padding for better spacing */
+            background-color: #02f0a5;
+            /* Set background color */
+            border-radius: 10px;
+            /* Add border radius for rounded corners */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            /* Add shadow for depth effect */
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            /* Set logo color */
+        }
+
+        .typebox {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            /* Add spacing between message input and messages */
+        }
+
+        .typebox-container {
+            width: auto;
+            /* Set the width to auto */
+            height: auto;
+            /* Set the height to auto */
+            padding: 10px;
+            /* Add padding for better spacing */
+            border-radius: 20px;
+            /* Add border radius for rounded corners */
+            background-color: #fff;
+            /* Set background color */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            /* Add shadow for depth effect */
+        }
+
+        #message-input {
+            flex: 1;
+            margin-right: 10px;
+            padding: 10px;
+            border-radius: 20px;
+            /* Add border radius for rounded corners */
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        #send-message {
+            padding: 10px 20px;
+            border-radius: 20px;
+            /* Add border radius for rounded corners */
+            background-color: #3273dc;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #send-message:hover {
+            background-color: #2769c1;
+        }
+
+        .messages {
+            height: 240px;
+            /* Set a maximum height for the message container */
+            overflow-y: auto;
+            /* Enable vertical scrolling if content exceeds the height */
+            border-radius: 10px;
+            /* Add border radius for rounded corners */
+            padding: 20px;
+            /* Add padding for better spacing */
+            background-color: #2562ef;
+            /* Set background color */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            /* Add shadow for depth effect */
+            margin-bottom: 20px;
+            /* Increase margin for better spacing */
+            word-wrap: break-word;
+            /* Allow long words to break into multiple lines */
+        }
+
+        .message {
+            margin-bottom: 20px;
+            /* Reduce margin between messages */
+            display: flex;
+            /* Enable flexbox for better alignment */
+            align-items: flex-start;
+            /* Align messages at the top */
+        }
+
+        .message-content {
+            background-color: #e6e6e6;
+            border-radius: 10px;
+            /* Add border radius for rounded corners */
+            padding: 10px;
+            margin-left: 20px;
+            /* Add margin to separate message content from avatar */
+        }
+
+        .message-text {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .avatar {
+            width: 40px;
+            /* Set avatar width */
+            height: 40px;
+            /* Set avatar height */
+            border-radius: 50%;
+            /* Round avatar shape */
+            margin-right: 10px;
+            /* Add spacing between avatar and message content */
+        }
+
+        /* Flexbox to fix message input box and send button below the column */
+        .app {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Responsive design */
+        @media screen and (max-width: 768px) {
+            .logo {
+                font-size: 20px;
+                /* Reduce logo size for smaller screens */
+            }
+
+            .message {
+                flex-direction: column;
+                /* Stack messages vertically on smaller screens */
+            }
+
+            .avatar {
+                margin-right: 0;
+                /* Remove margin between avatar and message content on smaller screens */
+                margin-bottom: 10px;
+                /* Add spacing between messages on smaller screens */
+            }
+        }
+    </style>
+
+</head>
+<h1 style="text-align: center; font-size: 28px; font-weight: bold;">CryptoConnect</h1>
+
+<body>
+
+    <section class="section">
+        <div class="container">
+
+
+            <!-- Encryption and Decryption Sections -->
+            <div class="columns is-multiline">
+                <!-- Encryption Section -->
+                <div class="column is-one-third">
+                    <div class="encryption-section">
+                        <class="subtitle">
+                            <h1 style="text-align: center; font-size: 24px; font-weight: bold;">Encrypt</h1></br>
+                            <div class="field">
+                                <label class="label">Message to Encrypt</label>
+                                <div class="control">
+                                    <textarea class="textarea" id="inputTextEncrypt"
+                                        placeholder="Enter your message to encrypt" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="field is-grouped">
+                                <div class="control">
+                                    <button class="button is-primary" id="encryptButton">Encrypt</button>
+                                </div>
+                                <div class="control">
+                                    <button class="button is-info" id="pasteButtonEncrypt">Paste</button>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Encrypted Message</label>
+                                <div class="control">
+                                    <textarea class="textarea" id="resultTextEncrypt" readonly rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button is-info" id="copyButtonEncrypt">Copy</button>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+
+                <!-- Join and Chat Screens -->
+                <div class="app column is-one-third">
+                    <div class="screen join-screen active">
+                        <div class="form"></div>
+                    </div>
+
+                    <div class="screen chat-screen">
+                        <div class="header">
+                            <div class="logo">Chat</div>
+                            <button id="exit-chat">Exit</button>
+                        </div>
+                        <div class="messages"></div>
+                        <div class="typebox-container"> <!-- New container div -->
+                            <div class="typebox">
+                                <input type="text" id="message-input" placeholder="Type your message...">
+                                <button id="send-message">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decryption Section -->
+                <div class="column is-one-third">
+                    <div class="decryption-section">
+                        <class="subtitle">
+                            <h1 style="text-align: center; font-size: 24px; font-weight: bold;">Decrypt</h1></br>
+                            <!-- Decryption content... -->
+                            <div class="field">
+                                <label class="label">Message to Decrypt</label>
+                                <div class="control">
+                                    <textarea class="textarea" id="inputTextDecrypt"
+                                        placeholder="Enter your message to decrypt" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="field is-grouped">
+                                <div class="control">
+                                    <button class="button is-primary" id="decryptButton">Decrypt</button>
+                                </div>
+                                <div class="control">
+                                    <button class="button is-info" id="pasteButtonDecrypt">Paste</button>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Decrypted Message</label>
+                                <div class="control">
+                                    <textarea class="textarea" id="resultTextDecrypt" readonly rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button is-info" id="copyButtonDecrypt">Copy</button>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script type="text/javascript" src="socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="code.js"></script>
+    <script src="js.js"></script>
+</body>
+
+</html>
